@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import com.kichikuchi.kotlinsample.model.Article
 import com.kichikuchi.kotlinsample.R
+import com.kichikuchi.kotlinsample.bindView
 
 /**
  * Created by KazunoriKikuchi on 2018/01/07.
@@ -29,17 +30,11 @@ class ArticleView: FrameLayout {
                 defStyleAttr: Int,
                 defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    val profileImageView: ImageView by lazy {
-        findViewById<ImageView>(R.id.profile_image_view)
-    }
+    val profileImageView: ImageView by bindView(R.id.profile_image_view)
 
-    val titleTextView: TextView by lazy {
-        findViewById<TextView>(R.id.title_text_view)
-    }
+    val titleTextView: TextView by bindView(R.id.title_text_view)
 
-    val userNameTextView: TextView by lazy {
-        findViewById<TextView>(R.id.user_name_text_view)
-    }
+    val userNameTextView: TextView by bindView(R.id.user_name_text_view)
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_article, this)
