@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                         listAdapter.articles = it
                         listAdapter.notifyDataSetChanged()
                     }, {
-                        Log.d("エラー","$it")
+                        Log.d("error: ", "$it")
                     })
         }
 
