@@ -3,9 +3,11 @@ package com.kichikuchi.kotlinsample
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.ProgressBar
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.kichikuchi.kotlinsample.model.Article
@@ -48,11 +50,15 @@ class MainActivity : AppCompatActivity() {
 
         val queryEditText = findViewById<EditText>(R.id.query_edit_text)
         val searchButton = findViewById<Button>(R.id.search_button)
+        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
 
         searchButton.setOnClickListener {
+            progressBar.visibility = View.VISIBLE
+
             articleClient.search(queryEditText.text.toString())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
+                    .doAfterTerminate { progressBar.visibility = View.GONE }
                     .subscribe({
                         queryEditText.text.clear()
                         listAdapter.articles = it
