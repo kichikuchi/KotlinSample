@@ -6,7 +6,7 @@ package com.kichikuchi.kotlinsample.client
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import rx.Observable
+import io.reactivex.Observable
 import com.kichikuchi.kotlinsample.model.Article
 
 interface ArticleClient {

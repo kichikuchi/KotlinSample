@@ -2,9 +2,20 @@ package com.kichikuchi.kotlinsample
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import com.kichikuchi.kotlinsample.model.Article
 import com.kichikuchi.kotlinsample.model.User
+import com.kichikuchi.kotlinsample.client.ArticleClient
+import io.reactivex.android.schedulers.AndroidSchedulers
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
+import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +33,35 @@ class MainActivity : AppCompatActivity() {
             val article = listAdapter.articles[position]
             ArticleActivity.intent(this, article).let { startActivity(it) }
         }
+
+        val gson = GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create()
+
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://qiita.com")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
+
+        val articleClient = retrofit.create(ArticleClient::class.java)
+
+        val queryEditText = findViewById<EditText>(R.id.query_edit_text)
+        val searchButton = findViewById<Button>(R.id.search_button)
+
+        searchButton.setOnClickListener {
+            articleClient.search(queryEditText.text.toString())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        queryEditText.text.clear()
+                        listAdapter.articles = it
+                        listAdapter.notifyDataSetChanged()
+                    }, {
+                        Log.d("エラー","$it")
+                    })
+        }
+
     }
 
     private fun dummyArticle(title: String, userName: String): Article =
